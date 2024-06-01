@@ -1,39 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:todo_and_reminder_app/utils/app_constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_and_reminder_app/method/load_data.dart';
+import 'package:todo_and_reminder_app/method/save_data.dart';
 import 'package:todo_and_reminder_app/views/screens/home_screens.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final isDarkMode = await loadThemeMode();
+  runApp(MyApp(isDarkMode: isDarkMode));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final bool isDarkMode;
+  MyApp({required this.isDarkMode});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  void changeThemeMode(bool isDark) {
+  late bool _isDarkMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkMode = widget.isDarkMode;
+  }
+
+  void _toggleThemeMode(bool isDarkMode) {
     setState(() {
-      AppConstants.themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+      _isDarkMode = isDarkMode;
     });
+    saveThemeMode(isDarkMode);
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.yellow,
-        ),
-      ),
-      darkTheme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: Colors.blue,
-          appBarTheme: AppBarTheme(color: Colors.red)),
-      themeMode: AppConstants.themeMode,
-      home: Homescreen(onThemeModeChanged: changeThemeMode),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      home: Homescreen(onThemeModeChanged: _toggleThemeMode),
     );
   }
 }

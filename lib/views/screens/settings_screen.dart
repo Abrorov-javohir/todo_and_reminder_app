@@ -1,83 +1,51 @@
-
 import 'package:flutter/material.dart';
-import 'package:todo_and_reminder_app/utils/app_constants.dart';
-import 'package:todo_and_reminder_app/views/screens/home_screens.dart';
+import 'package:todo_and_reminder_app/method/load_data.dart';
+import 'package:todo_and_reminder_app/method/save_data.dart';
 import 'package:todo_and_reminder_app/views/widgets/custom_drawer.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   final ValueChanged<bool> onThemeModeChanged;
-  const SettingsScreen({super.key, required this.onThemeModeChanged});
+  SettingsScreen({super.key, required this.onThemeModeChanged});
+
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadThemeMode();
+  }
+
+  void _loadThemeMode() async {
+    _isDarkMode = await loadThemeMode();
+    setState(() {});
+  }
+
+  void _toggleThemeMode(bool isDarkMode) {
+    setState(() {
+      _isDarkMode = isDarkMode;
+    });
+    widget.onThemeModeChanged(isDarkMode);
+    saveThemeMode(isDarkMode);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings"),
+        title: Text('Settings'),
       ),
       drawer: CustomDrawer(
-        onThemeModeChanged: onThemeModeChanged,
+        onThemeModeChanged: (value) => _toggleThemeMode(value),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            SwitchListTile(
-              value: AppConstants.themeMode == ThemeMode.dark,
-              onChanged: (value) {
-                onThemeModeChanged(value);
-              },
-              title: const Text("Night mode"),
-            ),
-            ListTile(
-              title: const Text(
-                "Install Pin Code",
-                style: TextStyle(color: Colors.black),
-              ),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Install Pin Code"),
-                      content: const Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            keyboardType: TextInputType.numberWithOptions(),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Enter PIN',
-                            ),
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Homescreen(
-                                      onThemeModeChanged: onThemeModeChanged)),
-                            );
-                          },
-                          child: const Text('Install'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
+      body: SwitchListTile(
+        title: Text('Dark Mode'),
+        value: _isDarkMode,
+        onChanged: _toggleThemeMode,
       ),
     );
   }

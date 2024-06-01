@@ -14,9 +14,7 @@ class CustomDrawer extends StatelessWidget {
       child: Column(
         children: [
           AppBar(
-            title: const Text(
-              "Menu",
-            ),
+            title: const Text("Menu"),
             automaticallyImplyLeading: false,
           ),
           ListTile(
@@ -24,44 +22,28 @@ class CustomDrawer extends StatelessWidget {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (ctx) {
-                    return Homescreen(
-                      onThemeModeChanged: onThemeModeChanged,
-                    );
+                    return Homescreen(onThemeModeChanged: onThemeModeChanged);
                   },
                 ),
               );
             },
-            leading: const Icon(
-              Icons.home,
-            ),
-            title: const Text(
-              "Home Page",
-            ),
-            trailing: const Icon(
-              Icons.chevron_right_rounded,
-            ),
+            leading: const Icon(Icons.home),
+            title: const Text("Home Page"),
+            trailing: const Icon(Icons.chevron_right_rounded),
           ),
           ListTile(
             onTap: () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (ctx) {
-                    return SettingsScreen(
-                      onThemeModeChanged: onThemeModeChanged,
-                    );
+                    return SettingsScreen(onThemeModeChanged: onThemeModeChanged);
                   },
                 ),
               );
             },
-            leading: const Icon(
-              Icons.settings,
-            ),
-            title: const Text(
-              "Settings",
-            ),
-            trailing: const Icon(
-              Icons.chevron_right_rounded,
-            ),
+            leading: const Icon(Icons.settings),
+            title: const Text("Settings"),
+            trailing: const Icon(Icons.chevron_right_rounded),
           ),
           ListTile(
             onTap: () {
@@ -73,15 +55,9 @@ class CustomDrawer extends StatelessWidget {
                 ),
               );
             },
-            leading: const Icon(
-              Icons.tour_outlined,
-            ),
-            title: const Text(
-              "Todo",
-            ),
-            trailing: const Icon(
-              Icons.chevron_right_rounded,
-            ),
+            leading: const Icon(Icons.tour_outlined),
+            title: const Text("Todo"),
+            trailing: const Icon(Icons.chevron_right_rounded),
           ),
           ListTile(
             onTap: () {
@@ -93,15 +69,9 @@ class CustomDrawer extends StatelessWidget {
                 ),
               );
             },
-            leading: const Icon(
-              Icons.note,
-            ),
-            title: const Text(
-              "Note",
-            ),
-            trailing: const Icon(
-              Icons.chevron_right_rounded,
-            ),
+            leading: const Icon(Icons.note),
+            title: const Text("Note"),
+            trailing: const Icon(Icons.chevron_right_rounded),
           ),
         ],
       ),
