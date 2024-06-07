@@ -1,53 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:todo_and_reminder_app/models/note.dart';
-import 'package:todo_and_reminder_app/views/widgets/custom_drawer.dart';
+import 'package:todo_and_reminder_app/service/note_service.dart';
 
 class NoteScreen extends StatefulWidget {
+  const NoteScreen({super.key});
+
   @override
   _NoteScreenState createState() => _NoteScreenState();
 }
 
 class _NoteScreenState extends State<NoteScreen> {
-  final List<Note> _notes = [];
+  late Future<List<Note>> _notes;
 
-  List<Note> get notes => _notes;
+  @override
+  void initState() {
+    super.initState();
+    _refreshNotes();
+  }
 
-  void addNote(String title, String content) {
-    final newNote = Note(
-      id: _notes.isEmpty ? 1 : _notes.last.id + 1,
-      title: title,
-      content: content,
-      createdDate: DateTime.now(),
-    );
+  void _refreshNotes() {
     setState(() {
-      _notes.add(newNote);
+      _notes = DatabaseHelper().getNotes();
     });
   }
 
-  void updateNote(int id, String title, String content) {
-    for (var note in _notes) {
-      if (note.id == id) {
-        final updatedNote = Note(
-          id: note.id,
-          title: title,
-          content: content,
-          createdDate: note.createdDate,
-        );
-        setState(() {
-          _notes[_notes.indexOf(note)] = updatedNote;
-        });
-        break;
-      }
-    }
-  }
-
-  void deleteNote(int id) {
-    setState(() {
-      _notes.removeWhere((note) => note.id == id);
-    });
-  }
-
-  void _showAddNoteDialog() {
+  void _showAddNoteDialog(BuildContext context) {
     String title = '';
     String content = '';
 
@@ -81,9 +58,15 @@ class _NoteScreenState extends State<NoteScreen> {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 if (title.isNotEmpty && content.isNotEmpty) {
-                  addNote(title, content);
+                  await DatabaseHelper().addNote(Note(
+                    id: 0, // This will be auto-incremented by the database
+                    title: title,
+                    content: content,
+                    createdDate: DateTime.now(),
+                  ));
+                  _refreshNotes();
                   Navigator.of(context).pop();
                 }
               },
@@ -95,9 +78,9 @@ class _NoteScreenState extends State<NoteScreen> {
     );
   }
 
-  void _showEditNoteDialog(Note note) {
-    String title = note.title;
-    String content = note.content;
+  void _showEditNoteDialog(BuildContext context, Note note) {
+    final TextEditingController titleController = TextEditingController(text: note.title);
+    final TextEditingController contentController = TextEditingController(text: note.content);
 
     showDialog(
       context: context,
@@ -109,17 +92,11 @@ class _NoteScreenState extends State<NoteScreen> {
             children: [
               TextField(
                 decoration: InputDecoration(labelText: 'Title'),
-                controller: TextEditingController(text: title),
-                onChanged: (value) {
-                  title = value;
-                },
+                controller: titleController,
               ),
               TextField(
                 decoration: InputDecoration(labelText: 'Content'),
-                controller: TextEditingController(text: content),
-                onChanged: (value) {
-                  content = value;
-                },
+                controller: contentController,
               ),
             ],
           ),
@@ -131,9 +108,15 @@ class _NoteScreenState extends State<NoteScreen> {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                if (title.isNotEmpty && content.isNotEmpty) {
-                  updateNote(note.id, title, content);
+              onPressed: () async {
+                if (titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
+                  await DatabaseHelper().updateNote(Note(
+                    id: note.id,
+                    title: titleController.text,
+                    content: contentController.text,
+                    createdDate: note.createdDate,
+                  ));
+                  _refreshNotes();
                   Navigator.of(context).pop();
                 }
               },
@@ -145,45 +128,77 @@ class _NoteScreenState extends State<NoteScreen> {
     );
   }
 
+  void _deleteNoteDialog(BuildContext context, int id) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Delete Note'),
+          content: Text('Are you sure you want to delete this note?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await DatabaseHelper().deleteNote(id);
+                _refreshNotes();
+                Navigator.of(context).pop();
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notes'),
+        title: const Text('Notes'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              _showAddNoteDialog(context);
+            },
+          ),
+        ],
       ),
-      drawer: CustomDrawer(
-        onThemeModeChanged: (bool value) {},
-      ),
-      body: ListView.builder(
-        itemCount: _notes.length,
-        itemBuilder: (context, index) {
-          final note = _notes[index];
-          return ListTile(
-            title: Text(note.title),
-            subtitle: Text(note.content),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    _showEditNoteDialog(note);
+      body: FutureBuilder<List<Note>>(
+        future: _notes,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No notes found'));
+          } else {
+            final notes = snapshot.data!;
+            return ListView.builder(
+              itemCount: notes.length,
+              itemBuilder: (context, index) {
+                final note = notes[index];
+                return ListTile(
+                  title: Text(note.title),
+                  subtitle: Text(note.content),
+                  onTap: () {
+                    _showEditNoteDialog(context, note);
                   },
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    deleteNote(note.id);
+                  onLongPress: () {
+                    _deleteNoteDialog(context, note.id);
                   },
-                ),
-              ],
-            ),
-          );
+                );
+              },
+            );
+          }
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddNoteDialog,
-        child: Icon(Icons.add),
       ),
     );
   }

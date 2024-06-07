@@ -44,3 +44,99 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+// void main() {
+//   runApp(const MyApp());
+// }
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: Homescreen(),
+//     );
+//   }
+// }
+
+// class Homescreen extends StatefulWidget {
+//   const Homescreen({super.key});
+
+//   @override
+//   State<Homescreen> createState() => _HomescreenState();
+// }
+
+// class _HomescreenState extends State<Homescreen> {
+  // int _selected_index = 0;
+  // void _onItemTaped(int index) {
+  //   setState(() {
+  //     _selected_index = index;
+  //   });
+  // }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text("Homescreen"),
+//       ),
+//       body: Row(
+//         children: <Widget>[
+//           NavigationRail(
+//             onDestinationSelected: _onItemTaped,
+//             selectedIndex: _selected_index,
+//             labelType: NavigationRailLabelType.selected,
+//             destinations: <NavigationRailDestination>[
+//               NavigationRailDestination(
+//                 icon: Icon(Icons.home),
+//                 label: Text("Home"),
+//               ),
+//               NavigationRailDestination(
+//                 icon: Icon(Icons.search),
+//                 label: Text("Search "),
+//               ),
+//               NavigationRailDestination(
+//                 icon: Icon(Icons.person),
+//                  label: Text("Profile "),
+//               ),
+//             ],
+//           ),
+//           Expanded(
+//             child: Center(
+//               child:Text("")
+//             ),
+//           ),
+//         ],
+//       ),
+//       bottomNavigationBar: BottomNavigationBar(
+//         items: const <BottomNavigationBarItem>[
+//           BottomNavigationBarItem(
+//             icon: Icon(
+//               Icons.home,
+//             ),
+//             label: "Home",
+            
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(
+//               Icons.search,
+//             ),
+
+//             label: "search",
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(
+//               Icons.person,
+//             ),
+//             label: "Profile",
+//           ),
+//         ],
+//         currentIndex: _selected_index,
+//         selectedItemColor: Colors.amber[800],
+//         onTap: _onItemTaped,
+//       ),
+//     );
+//   }
+// }
+

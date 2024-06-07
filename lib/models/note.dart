@@ -1,8 +1,8 @@
 class Note {
-  final int id;
-  final String title;
-  final String content;
-  final DateTime createdDate;
+  int id;
+  String title;
+  String content;
+  DateTime createdDate;
 
   Note({
     required this.id,
@@ -11,8 +11,7 @@ class Note {
     required this.createdDate,
   });
 
-  // JSON formatiga o'tkazish
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
@@ -21,13 +20,12 @@ class Note {
     };
   }
 
-  // JSON formatidan Note obyektiga o'tkazish
-  factory Note.fromJson(Map<String, dynamic> json) {
+  factory Note.fromMap(Map<String, dynamic> map) {
     return Note(
-      id: json['id'],
-      title: json['title'],
-      content: json['content'],
-      createdDate: DateTime.parse(json['createdDate']),
+      id: map['id'],
+      title: map['title'],
+      content: map['content'],
+      createdDate: DateTime.parse(map['createdDate']),
     );
   }
 }

@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:todo_and_reminder_app/models/task.dart';
 
@@ -14,12 +15,14 @@ class ContactItem extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _ContactItemState createState() => _ContactItemState();
 }
 
 class _ContactItemState extends State<ContactItem> {
   bool isTicked = false;
 
+  // ignore: non_constant_identifier_names
   void CheckTick() {
     setState(() {
       isTicked = !isTicked;
@@ -30,6 +33,7 @@ class _ContactItemState extends State<ContactItem> {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(widget.contact.name),
+      
       subtitle: Text(widget.contact.task),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

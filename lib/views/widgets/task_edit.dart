@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_and_reminder_app/models/task.dart';
 
@@ -12,33 +11,27 @@ class ContactEditDialog extends StatefulWidget {
 
 class _ContactEditDialogState extends State<ContactEditDialog> {
   final _formKey = GlobalKey<FormState>();
-
-  String name = "";
-  String task = "";
+  late String name;
+  late String task;
 
   @override
   void initState() {
     super.initState();
-
     name = widget.contact.name;
     task = widget.contact.task;
   }
 
-  void add() {
+  void edit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      Navigator.pop(context, {
-        "name": name,
-        "task": task,
-      });
+      Navigator.pop(context, {"name": name, "task": task});
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Add Contact"),
+      title: const Text("Edit Contact"),
       content: Form(
         key: _formKey,
         child: Column(
@@ -48,13 +41,12 @@ class _ContactEditDialogState extends State<ContactEditDialog> {
               initialValue: name,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: "Task name",
+                labelText: "Contact Name",
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return "Please enter name";
                 }
-
                 return null;
               },
               onSaved: (newValue) {
@@ -63,12 +55,9 @@ class _ContactEditDialogState extends State<ContactEditDialog> {
                 }
               },
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             TextFormField(
               initialValue: task,
-              keyboardType: TextInputType.text,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: "Task",
@@ -77,7 +66,6 @@ class _ContactEditDialogState extends State<ContactEditDialog> {
                 if (value == null || value.trim().isEmpty) {
                   return "Please enter task";
                 }
-
                 return null;
               },
               onSaved: (newValue) {
@@ -86,9 +74,7 @@ class _ContactEditDialogState extends State<ContactEditDialog> {
                 }
               },
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -100,7 +86,7 @@ class _ContactEditDialogState extends State<ContactEditDialog> {
           child: const Text("Cancel"),
         ),
         ElevatedButton(
-          onPressed: add,
+          onPressed: edit,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,

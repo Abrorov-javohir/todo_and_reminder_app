@@ -14,19 +14,17 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
-  final contactsController = ContactsController();
+  final ContactsController contactsController = ContactsController();
 
   void onDelete(int index) {
     contactsController.delete(index);
     setState(() {});
   }
 
-  void onEdit(Contact contact, int index) async {
-    Map<String, dynamic>? data = await showDialog(
+  Future<void> onEdit(Contact contact, int index) async {
+    final data = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (ctx) {
-        return ContactEditDialog(contact: contact);
-      },
+      builder: (ctx) => ContactEditDialog(contact: contact),
     );
 
     if (data != null && data['name'] != null && data['task'] != null) {
@@ -39,12 +37,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
     }
   }
 
-  void onAdd() async {
-    Map<String, dynamic>? data = await showDialog(
+  Future<void> onAdd() async {
+    final data = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (ctx) {
-        return ContactAddDialog();
-      },
+      builder: (ctx) => ContactAddDialog(),
     );
 
     if (data != null && data['name'] != null && data['task'] != null) {
@@ -58,15 +54,17 @@ class _ContactsScreenState extends State<ContactsScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
-        title: Text('Contacts'),
+        title: const Text('Contacts'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: onAdd,
           ),
         ],
       ),
-      drawer: CustomDrawer(onThemeModeChanged: (bool value) {  },),
+      drawer: CustomDrawer(
+        onThemeModeChanged: (bool value) {},
+      ),
       body: ListView.builder(
         itemCount: contactsController.list.length,
         itemBuilder: (ctx, index) {

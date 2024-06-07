@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_and_reminder_app/views/widgets/custom_drawer.dart';
 
+// ignore: must_be_immutable
 class Homescreen extends StatelessWidget {
   final ValueChanged<bool> onThemeModeChanged;
   Homescreen({super.key, required this.onThemeModeChanged});
